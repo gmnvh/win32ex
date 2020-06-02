@@ -4,14 +4,19 @@
 
 #include <windows.h>
 
+/* Globals variables */
+HWND hLabel;
+
+
 /* Local prototypes */
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void createLabels(HWND hwnd);
+void createButtons(HWND hwnd);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
     // Register the window class.
-    const wchar_t CLASS_NAME[] = L"Label_Example_01";
+    const wchar_t CLASS_NAME[] = L"Button_Example_01";
 
     WNDCLASS wc = { };
 
@@ -26,7 +31,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
     HWND hwnd = CreateWindowEx(
         0,                              // Optional window styles.
         CLASS_NAME,                     // Window class
-        L"Label Example 01",            // Window text
+        L"Button Example 01",            // Window text
         WS_OVERLAPPEDWINDOW,            // Window style
 
         // Size and position - X, Y, nWidth, nHeight
@@ -67,6 +72,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     case WM_CREATE:
         createLabels(hwnd);
+        createButtons(hwnd);
         return 0;
 
     case WM_PAINT:
@@ -77,6 +83,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         EndPaint(hwnd, &ps);
     }
     return 0;
+
+    case WM_COMMAND:
+        switch (wParam)
+        {
+        case 1: /* Button was pressed */
+
+            /* Change the main window title */
+            SetWindowTextW(hwnd, L"How to change window title");
+
+            /* Change the label title */
+            SetWindowTextW(hLabel, L"How to change label title");
+            break;
+        }
+
+        return 0;
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -85,9 +106,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void createLabels(HWND hwnd)
 {
     /* Label 1 */
-    CreateWindowW(L"Static",
-                  L"My First Label",
-                  WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+    hLabel = CreateWindowW(L"Static",
+                           L"My First Label",
+                           WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+                           110, 10, 100, 50, hwnd,
+                           NULL, NULL, NULL);
+}
+
+void createButtons(HWND hwnd)
+{
+    CreateWindowW(L"Button", L"Change Title",
+                  WS_VISIBLE | WS_CHILD,
                   10, 10, 100, 50, hwnd,
-                  NULL, NULL, NULL);
+                  (HMENU)1, NULL, NULL);
 }
